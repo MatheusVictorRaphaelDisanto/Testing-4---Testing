@@ -215,7 +215,7 @@ chatForm.addEventListener('submit', async (e) => {
   const payload = {
     model:"deepseek/deepseek-chat-v3.1:free",
     messages:[
-      { role:"system", content:"Você é um assistente especializado em Clash of Clans. Responda de forma curta, prática e objetiva. Evite enrolação." },
+      { role:"system", content:"Você é um assistente especializado em Clash of Clans. Responda de forma curta, prática e objetiva. Evite enrolação e seja preciso ao só reponder contexto do Clash of Clans da Supercell, não traga nenhuma informação de outros jogos da franquia." },
       { role:"user", content: message }
     ],
     stream:false
