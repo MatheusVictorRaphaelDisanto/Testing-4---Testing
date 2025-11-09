@@ -168,10 +168,7 @@ const loadingOverlay = document.getElementById('loading-overlay');
 
 // Função para limpar tokens indesejados e espaços extras
 function cleanAIResponse(text) {
-  return text
-    .replace(/<\|begin▁of▁sentence\|>/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+  return text.replace('<｜begin▁of▁sentence｜>', '');
 }
 
 function addMessage(text, sender) {
