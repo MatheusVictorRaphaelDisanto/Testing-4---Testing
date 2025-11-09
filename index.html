@@ -4,101 +4,282 @@
   <meta charset="UTF-8">
   <title>DeepSeek Chat Demo</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; }
-    #chat-box { width: 100%; max-width: 600px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 24px; }
-    #messages { min-height: 120px; margin-bottom: 16px; }
-    .msg { margin-bottom: 10px; }
-    .user { color: #1976d2; }
-    .bot { color: #388e3c; }
-    label, input, textarea, button { display: block; width: 100%; margin-bottom: 10px; }
-    button { width: auto; padding: 8px 24px; }
-    #api-key { font-family: monospace; }
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3a0ca3;
+      --user-color: #4361ee;
+      --bot-color: #4cc9f0;
+      --background-color: #f8f9fa;
+      --card-color: #ffffff;
+      --text-color: #333333;
+      --light-text: #6c757d;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --border-radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+    }
+    h1 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    .chat-container {
+      background-color: var(--card-color);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #chat {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 500px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .user-message {
+      align-self: flex-end;
+      background-color: var(--user-color);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .bot-message {
+      align-self: flex-start;
+      background-color: #f1f3f5;
+      color: var(--text-color);
+      border-bottom-left-radius: 4px;
+    }
+    .input-container {
+      display: flex;
+      padding: 20px;
+      background-color: var(--card-color);
+      border-top: 1px solid #e9ecef;
+    }
+    #inputMessage {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid #e1e5e9;
+      border-radius: 30px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    #inputMessage:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+    }
+    #sendBtn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      margin-left: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #sendBtn:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+    #sendBtn:active {
+      transform: scale(0.98);
+    }
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background-color: #f1f3f5;
+      padding: 12px 16px;
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      margin-bottom: 15px;
+    }
+    .typing-dots {
+      display: flex; gap: 4px; }
+    .typing-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background-color: var(--light-text);
+      animation: typingAnimation 1.4s infinite ease-in-out; }
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingAnimation {
+        0%,60%,100%{transform:none;}
+        30%{transform:translateY(-5px);}
+    }
+    @media (max-width:600px){
+        body{padding:10px;}
+        h1{font-size:2rem;}
+        .message{max-width:90%;}
+        #chat{padding:15px;}
+        .input-container{padding:10px;}
+    }
+    /* API Key modal */
+    .modal-bg {
+        position:absolute; left:0; top:0; width:100vw; height:100vh; background:#0005; z-index:10; display:flex; align-items:center; justify-content:center;}
+    .modal-card {
+        background:white; padding:32px; border-radius:16px; box-shadow:var(--shadow); min-width:320px; max-width:90vw;}
+    .modal-card label {font-weight:bold;}
+    .modal-card input {margin-top:.5em;}
+    .modal-card button {margin-top:.8em;}
   </style>
 </head>
 <body>
-<div id="chat-box">
-  <h2>DeepSeek Chat Demo</h2>
-  <form id="apikey-form">
-    <label for="api-key">Informe sua DeepSeek API Key:</label>
-    <input type="password" id="api-key" required autocomplete="off" placeholder="sk-...">
-    <button type="submit">Salvar API Key</button>
-  </form>
-  <div id="messages"></div>
-  <form id="chat-form" style="display:none;">
-    <label for="message">Mensagem:</label>
-    <textarea id="message" rows="3" required></textarea>
-    <button type="submit">Enviar</button>
-  </form>
+<div class="container">
+<header>
+   <h1>DeepSeek Chat Demo</h1>
+   <div class="subtitle">Assistente especializado em Clash of Clans</div>
+</header>
+<div class="chat-container">
+   <div id="chat"></div>
+   <div class="typing-indicator" id="typing-indicator">
+     <div class="typing-dots">
+       <div class="typing-dot"></div>
+       <div class="typing-dot"></div>
+       <div class="typing-dot"></div>
+     </div>
+   </div>
+   <form class="input-container" id="chat-form" style="display:none;">
+     <input type="text" id="inputMessage" placeholder="Digite sua mensagem..." autocomplete="off" required />
+     <button type="submit" id="sendBtn" title="Enviar"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg></button>
+   </form>
 </div>
+</div>
+
+<!-- Modal para API Key -->
+<div class="modal-bg" id="apikey-modal">
+   <form class="modal-card" id="apikey-form">
+     <label for="api-key">Informe sua DeepSeek API Key:</label>
+     <input type="password" id="api-key" required autocomplete="off" placeholder="sk-...">
+     <button type="submit">Salvar API Key</button>
+   </form>
+</div>
+
 <script>
 let DEEPSEEK_API_KEY = "";
 
+const apikeyModal = document.getElementById('apikey-modal');
 const apikeyForm = document.getElementById('apikey-form');
 const chatForm = document.getElementById('chat-form');
-const messagesDiv = document.getElementById('messages');
+const chatDiv = document.getElementById('chat');
+const typingIndicator = document.getElementById('typing-indicator');
 
 function addMessage(text, sender) {
-  const div = document.createElement('div');
-  div.className = 'msg ' + sender;
-  div.innerHTML = `<strong>${sender === 'user' ? 'Você' : 'BOT'}:</strong> ${text}`;
-  messagesDiv.appendChild(div);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+   const div = document.createElement('div');
+   div.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
+   div.innerHTML = text.trim();
+   chatDiv.appendChild(div);
+   chatDiv.scrollTop = chatDiv.scrollHeight;
+}
+
+function showTyping(show=true) {
+   typingIndicator.style.display = show ? "block" : "none";
 }
 
 apikeyForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const key = document.getElementById('api-key').value.trim();
-  if (!key.startsWith("sk-")) {
-    alert("API Key inválida!");
-    return;
-  }
-  DEEPSEEK_API_KEY = key;
-  apikeyForm.style.display = "none";
-  chatForm.style.display = "";
+   e.preventDefault();
+   const key = document.getElementById('api-key').value.trim();
+   if (!key.startsWith("sk-")) {
+     alert("API Key inválida!");
+     return;
+   }
+   DEEPSEEK_API_KEY = key;
+   apikeyModal.style.display = "none";
+   chatForm.style.display = "";
+   document.getElementById('inputMessage').focus();
 });
 
 chatForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const message = document.getElementById('message').value.trim();
-  if (!message) return;
-  addMessage(message, 'user');
-  chatForm.querySelector('button').disabled = true;
+   e.preventDefault();
+   const message = document.getElementById('inputMessage').value.trim();
+   if (!message) return;
 
-  // Monta o payload DeepSeek
-  const payload = {
-    model: "deepseek/deepseek-chat-v3.1:free",
-    messages: [
-      { role: "system", content: "Você é um assistente especializado em Clash of Clans. Responda perguntas sobre estratégias, tropas, construções, clãs, guerras, atualizações do jogo e dicas para jogadores." },
-      { role: "user", content: message }
-    ],
-    stream: false
-  };
+   addMessage(message, 'user');
+   showTyping(true);
+   chatForm.querySelector('button').disabled = true;
 
-  try {
-    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + DEEPSEEK_API_KEY
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!resp.ok) {
-      const err = await resp.json();
-      addMessage("Erro: " + (err.detail || resp.status), 'bot');
-    } else {
-      const data = await resp.json();
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        addMessage(data.choices[0].message.content, 'bot');
-      } else {
-        addMessage("Resposta inesperada da API.", 'bot');
-      }
-    }
-  } catch (err) {
-    addMessage("Erro de conexão com a API DeepSeek.", 'bot');
-  }
-  chatForm.querySelector('button').disabled = false;
-  document.getElementById('message').value = '';
+   const payload = {
+     model:"deepseek/deepseek-chat-v3.1:free",
+     messages:[
+       { role:"system", content:"Você é um assistente especializado em Clash of Clans. Responda perguntas sobre estratégias, tropas, construções, clãs, guerras, atualizações do jogo e dicas para jogadores." },
+       { role:"user", content: message }
+     ],
+     stream:false
+   };
+
+   try {
+     const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+       method:"POST",
+       headers:{
+         "Content-Type":"application/json",
+         "Authorization":"Bearer "+DEEPSEEK_API_KEY
+       },
+       body: JSON.stringify(payload)
+     });
+     showTyping(false);
+     chatForm.querySelector('button').disabled = false;
+
+     if (!resp.ok) {
+       let errMsg = "Erro desconhecido";
+       try { const err = await resp.json(); errMsg = err.detail || JSON.stringify(err); } catch {}
+       addMessage(`<span style='color:#c00'>Erro:</span> ${errMsg}`, 'bot');
+     } else {
+       const data = await resp.json();
+       // Só mostra o conteúdo da resposta do bot
+       if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+         addMessage(data.choices[0].message.content, 'bot');
+       } else {
+         addMessage("<span style='color:#c00'>Resposta inesperada da API.</span>", 'bot');
+       }
+     }
+   } catch (err) {
+     showTyping(false);
+     chatForm.querySelector('button').disabled = false;
+     addMessage("<span style='color:#c00'>Erro de conexão com a API DeepSeek.</span>", 'bot');
+   }
+
+   document.getElementById('inputMessage').value = '';
 });
 </script>
 </body>
