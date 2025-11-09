@@ -40,10 +40,14 @@
       margin-bottom: 30px;
       padding: 20px;
     }
+    .header-icon {
+      display:inline-block; vertical-align:middle; margin-right:8px;
+    }
     h1 {
       color: var(--primary-color);
       font-size: 2.5rem;
       font-weight: 700;
+      display:inline-block; vertical-align:middle;
     }
     .chat-container {
       background-color: var(--card-color);
@@ -69,6 +73,7 @@
       border-radius: 18px;
       position: relative;
       animation: fadeIn 0.3s ease;
+      display:flex; align-items:flex-start; gap:.5em;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -85,6 +90,10 @@
       background-color: #f1f3f5;
       color: var(--text-color);
       border-bottom-left-radius: 4px;
+    }
+    .bot-icon {
+        width:28px; height:28px; flex-shrink:0; margin-top:-2px; /* alinhamento */
+        display:inline-block; vertical-align:middle;
     }
     .input-container {
       display: flex;
@@ -127,26 +136,7 @@
       transform: scale(0.98);
     }
     .typing-indicator {
-      display: none;
-      align-self: flex-start;
-      background-color: #f1f3f5;
-      padding: 12px 16px;
-      border-radius: 18px;
-      border-bottom-left-radius: 4px;
-      margin-bottom: 15px;
-    }
-    .typing-dots {
-      display: flex; gap: 4px; }
-    .typing-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background-color: var(--light-text);
-      animation: typingAnimation 1.4s infinite ease-in-out; }
-    .typing-dot:nth-child(1) { animation-delay: 0s; }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typingAnimation {
-        0%,60%,100%{transform:none;}
-        30%{transform:translateY(-5px);}
+      display:none; /* não usada mais, mas mantida para compatibilidade */
     }
     @media (max-width:600px){
         body{padding:10px;}
@@ -154,6 +144,7 @@
         .message{max-width:90%;}
         #chat{padding:15px;}
         .input-container{padding:10px;}
+        .modal-card{min-width:auto;}
     }
     /* API Key modal */
     .modal-bg {
@@ -163,23 +154,32 @@
     .modal-card label {font-weight:bold;}
     .modal-card input {margin-top:.5em;}
     .modal-card button {margin-top:.8em;}
+    /* Loading overlay */
+    .loading-overlay {
+        position:absolute; left:0; top:0; width:100vw; height:100vh; z-index:20; background:#0007; display:flex; align-items:center; justify-content:center; transition:.2s opacity;}
+    .loading-spinner {
+        display:flex; flex-direction:column; align-items:center; gap:.7em
+    }
+    .lds-dual-ring {
+        display:inline-block;width:64px;height:64px;}
+    .lds-dual-ring::after {
+        content:" ";display:block;width:46px;height:46px;margin:auto;border-radius:50%;border:.5em solid #4cc9f0;border-color:#4cc9f0 transparent #4361ee transparent;animation:lspin 1.2s linear infinite;}
+    @keyframes lspin {100%{transform:rotate(360deg);}}
+    .loading-text {color:white;font-size:.95em;margin-top:.5em;text-align:center;}
   </style>
 </head>
 <body>
 <div class="container">
 <header>
+   <span class="header-icon">
+     <!-- Ícone de robô SVG -->
+     <svg class="bot-icon" viewBox="0 0 32 32" fill="none"><rect x="7" y="13" width="18" height="12" rx="6" fill="#4cc9f0"/><rect x="11" y="7" width="10" height="8" rx="5" fill="#4361ee"/><circle cx="12.5" cy="19.5" r="2" fill="#fff"/><circle cx="19.5" cy="19.5" r="2" fill="#fff"/><rect x="15" y="3" width="2" height="6" rx="1" fill="#3a0ca3"/></svg>
+   </span>
    <h1>DeepSeek Chat Demo</h1>
    <div class="subtitle">Assistente especializado em Clash of Clans</div>
 </header>
 <div class="chat-container">
    <div id="chat"></div>
-   <div class="typing-indicator" id="typing-indicator">
-     <div class="typing-dots">
-       <div class="typing-dot"></div>
-       <div class="typing-dot"></div>
-       <div class="typing-dot"></div>
-     </div>
-   </div>
    <form class="input-container" id="chat-form" style="display:none;">
      <input type="text" id="inputMessage" placeholder="Digite sua mensagem..." autocomplete="off" required />
      <button type="submit" id="sendBtn" title="Enviar"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg></button>
@@ -196,6 +196,14 @@
    </form>
 </div>
 
+<!-- Overlay de loading -->
+<div class="loading-overlay" id="loading-overlay" style="display:none;">
+   <div class="loading-spinner">
+     <div class="lds-dual-ring"></div>
+     <div class="loading-text">Aguarde... O robô está pensando!</div>
+   </div>
+</div>
+
 <script>
 let DEEPSEEK_API_KEY = "";
 
@@ -203,18 +211,24 @@ const apikeyModal = document.getElementById('apikey-modal');
 const apikeyForm = document.getElementById('apikey-form');
 const chatForm = document.getElementById('chat-form');
 const chatDiv = document.getElementById('chat');
-const typingIndicator = document.getElementById('typing-indicator');
+const loadingOverlay = document.getElementById('loading-overlay');
 
 function addMessage(text, sender) {
    const div = document.createElement('div');
    div.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
-   div.innerHTML = text.trim();
+   if(sender === 'bot') {
+     div.innerHTML = `<span class='bot-icon'>
+       <svg viewBox='0 0 32 32' fill='none' width='28' height='28'><rect x='7' y='13' width='18' height='12' rx='6' fill='#4cc9f0'/><rect x='11' y='7' width='10' height='8' rx='5' fill='#4361ee'/><circle cx='12.5' cy='19.5' r='2' fill='#fff'/><circle cx='19.5' cy='19.5' r='2' fill='#fff'/><rect x='15' y='3' width='2' height='6' rx='1' fill='#3a0ca3'/></svg>
+     </span> <span>${text.trim()}</span>`;
+   } else {
+     div.innerHTML = text.trim();
+   }
    chatDiv.appendChild(div);
    chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
-function showTyping(show=true) {
-   typingIndicator.style.display = show ? "block" : "none";
+function showLoading(show=true) {
+   loadingOverlay.style.display = show ? "flex" : "none";
 }
 
 apikeyForm.addEventListener('submit', (e) => {
@@ -236,8 +250,9 @@ chatForm.addEventListener('submit', async (e) => {
    if (!message) return;
 
    addMessage(message, 'user');
-   showTyping(true);
+   showLoading(true);
    chatForm.querySelector('button').disabled = true;
+   document.getElementById('inputMessage').disabled = true;
 
    const payload = {
      model:"deepseek/deepseek-chat-v3.1:free",
@@ -257,8 +272,6 @@ chatForm.addEventListener('submit', async (e) => {
        },
        body: JSON.stringify(payload)
      });
-     showTyping(false);
-     chatForm.querySelector('button').disabled = false;
 
      if (!resp.ok) {
        let errMsg = "Erro desconhecido";
@@ -266,7 +279,6 @@ chatForm.addEventListener('submit', async (e) => {
        addMessage(`<span style='color:#c00'>Erro:</span> ${errMsg}`, 'bot');
      } else {
        const data = await resp.json();
-       // Só mostra o conteúdo da resposta do bot
        if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
          addMessage(data.choices[0].message.content, 'bot');
        } else {
@@ -274,10 +286,12 @@ chatForm.addEventListener('submit', async (e) => {
        }
      }
    } catch (err) {
-     showTyping(false);
-     chatForm.querySelector('button').disabled = false;
      addMessage("<span style='color:#c00'>Erro de conexão com a API DeepSeek.</span>", 'bot');
    }
+
+   showLoading(false);
+   chatForm.querySelector('button').disabled = false;
+   document.getElementById('inputMessage').disabled = false;
 
    document.getElementById('inputMessage').value = '';
 });
