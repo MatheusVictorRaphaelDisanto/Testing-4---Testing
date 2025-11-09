@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>DeepSeek Chat Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; }
+    #chat-box { width: 100%; max-width: 600px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 24px; }
+    #messages { min-height: 120px; margin-bottom: 16px; }
+    .msg { margin-bottom: 10px; }
+    .user { color: #1976d2; }
+    .bot { color: #388e3c; }
+    label, input, textarea, button { display: block; width: 100%; margin-bottom: 10px; }
+    button { width: auto; padding: 8px 24px; }
+    #api-key { font-family: monospace; }
+  </style>
+</head>
+<body>
+<div id="chat-box">
+  <h2>DeepSeek Chat Demo</h2>
+  <form id="apikey-form">
+    <label for="api-key">Informe sua DeepSeek API Key:</label>
+    <input type="password" id="api-key" required autocomplete="off" placeholder="sk-...">
+    <button type="submit">Salvar API Key</button>
+  </form>
+  <div id="messages"></div>
+  <form id="chat-form" style="display:none;">
+    <label for="message">Mensagem:</label>
+    <textarea id="message" rows="3" required></textarea>
+    <button type="submit">Enviar</button>
+  </form>
+</div>
+<script>
+let DEEPSEEK_API_KEY = "";
+
+const apikeyForm = document.getElementById('apikey-form');
+const chatForm = document.getElementById('chat-form');
+const messagesDiv = document.getElementById('messages');
+
+function addMessage(text, sender) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + sender;
+  div.innerHTML = `<strong>${sender === 'user' ? 'Você' : 'BOT'}:</strong> ${text}`;
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+apikeyForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const key = document.getElementById('api-key').value.trim();
+  if (!key.startsWith("sk-")) {
+    alert("API Key inválida!");
+    return;
+  }
+  DEEPSEEK_API_KEY = key;
+  apikeyForm.style.display = "none";
+  chatForm.style.display = "";
+});
+
+chatForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const message = document.getElementById('message').value.trim();
+  if (!message) return;
+  addMessage(message, 'user');
+  chatForm.querySelector('button').disabled = true;
+
+  // Monta o payload DeepSeek
+  const payload = {
+    model: "deepseek/deepseek-r1:free",
+    messages: [
+      { role: "system", content: "Você é um assistente especializado em Clash of Clans. Responda perguntas sobre estratégias, tropas, construções, clãs, guerras, atualizações do jogo e dicas para jogadores." },
+      { role: "user", content: message }
+    ],
+    stream: false
+  };
+
+  try {
+    const resp = await fetch("https://api.deepseek.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + DEEPSEEK_API_KEY
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) {
+      const err = await resp.json();
+      addMessage("Erro: " + (err.detail || resp.status), 'bot');
+    } else {
+      const data = await resp.json();
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        addMessage(data.choices[0].message.content, 'bot');
+      } else {
+        addMessage("Resposta inesperada da API.", 'bot');
+      }
+    }
+  } catch (err) {
+    addMessage("Erro de conexão com a API DeepSeek.", 'bot');
+  }
+  chatForm.querySelector('button').disabled = false;
+  document.getElementById('message').value = '';
+});
+</script>
+</body>
+</html>
