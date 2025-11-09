@@ -243,7 +243,7 @@ chatForm.addEventListener('submit', async (e) => {
     } else {
       const data = await resp.json();
       if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-        addMessage(data.choices[0].message.content, 'bot');
+        addMessage(cleanAIResponse(data.choices[0].message.content, 'bot'));
       } else {
         addMessage("<span style='color:#c00'>Resposta inesperada da API.</span>", 'bot');
       }
