@@ -40,9 +40,7 @@
       margin-bottom: 30px;
       padding: 20px;
     }
-    .header-icon {
-      display:inline-block; vertical-align:middle; margin-right:8px;
-    }
+    .header-icon { display:inline-block; vertical-align:middle; margin-right:8px; }
     h1 {
       color: var(--primary-color);
       font-size: 2.5rem;
@@ -92,78 +90,37 @@
       border-bottom-left-radius: 4px;
     }
     .bot-icon {
-        width:28px; height:28px; flex-shrink:0; margin-top:-2px; /* alinhamento */
-        display:inline-block; vertical-align:middle;
+      width:28px; height:28px; flex-shrink:0; margin-top:-2px; display:inline-block; vertical-align:middle;
     }
     .input-container {
-      display: flex;
-      padding: 20px;
-      background-color: var(--card-color);
-      border-top: 1px solid #e9ecef;
+      display: flex; padding: 20px; background-color: var(--card-color); border-top: 1px solid #e9ecef;
     }
     #inputMessage {
-      flex: 1;
-      padding: 14px 18px;
-      border: 1px solid #e1e5e9;
-      border-radius: 30px;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.3s ease;
+      flex: 1; padding: 14px 18px; border: 1px solid #e1e5e9; border-radius: 30px; font-size: 1rem; outline: none; transition: all 0.3s ease;
     }
     #inputMessage:focus {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+      border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
     }
     #sendBtn {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      margin-left: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background-color: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; margin-left: 12px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
     }
-    #sendBtn:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-    #sendBtn:active {
-      transform: scale(0.98);
-    }
-    .typing-indicator {
-      display:none; /* não usada mais, mas mantida para compatibilidade */
-    }
+    #sendBtn:hover { background-color: var(--secondary-color); transform: scale(1.05); }
+    #sendBtn:active { transform: scale(0.98); }
+    .typing-indicator { display:none;}
     @media (max-width:600px){
-        body{padding:10px;}
-        h1{font-size:2rem;}
-        .message{max-width:90%;}
-        #chat{padding:15px;}
-        .input-container{padding:10px;}
-        .modal-card{min-width:auto;}
+        body{padding:10px;} h1{font-size:2rem;} .message{max-width:90%;} #chat{padding:15px;} .input-container{padding:10px;} .modal-card{min-width:auto;}
     }
     /* API Key modal */
-    .modal-bg {
-        position:absolute; left:0; top:0; width:100vw; height:100vh; background:#0005; z-index:10; display:flex; align-items:center; justify-content:center;}
-    .modal-card {
-        background:white; padding:32px; border-radius:16px; box-shadow:var(--shadow); min-width:320px; max-width:90vw;}
+    .modal-bg { position:absolute; left:0; top:0; width:100vw; height:100vh; background:#0005; z-index:10; display:flex; align-items:center; justify-content:center;}
+    .modal-card { background:white; padding:32px; border-radius:16px; box-shadow:var(--shadow); min-width:320px; max-width:90vw;}
     .modal-card label {font-weight:bold;}
     .modal-card input {margin-top:.5em;}
     .modal-card button {margin-top:.8em;}
     /* Loading overlay */
-    .loading-overlay {
-        position:absolute; left:0; top:0; width:100vw; height:100vh; z-index:20; background:#0007; display:flex; align-items:center; justify-content:center; transition:.2s opacity;}
-    .loading-spinner {
-        display:flex; flex-direction:column; align-items:center; gap:.7em
-    }
-    .lds-dual-ring {
-        display:inline-block;width:64px;height:64px;}
-    .lds-dual-ring::after {
-        content:" ";display:block;width:46px;height:46px;margin:auto;border-radius:50%;border:.5em solid #4cc9f0;border-color:#4cc9f0 transparent #4361ee transparent;animation:lspin 1.2s linear infinite;}
+    .loading-overlay { position:absolute; left:0; top:0; width:100vw; height:100vh; z-index:20; background:#0007; display:flex; align-items:center; justify-content:center; transition:.2s opacity;}
+    .loading-spinner { display:flex; flex-direction:column; align-items:center; gap:.7em }
+    .lds-dual-ring { display:inline-block;width:64px;height:64px;}
+    .lds-dual-ring::after { content:" ";display:block;width:46px;height:46px;margin:auto;border-radius:50%;border:.5em solid #4cc9f0;border-color:#4cc9f0 transparent #4361ee transparent;animation:lspin 1.2s linear infinite;}
     @keyframes lspin {100%{transform:rotate(360deg);}}
     .loading-text {color:white;font-size:.95em;margin-top:.5em;text-align:center;}
   </style>
@@ -171,129 +128,134 @@
 <body>
 <div class="container">
 <header>
-   <span class="header-icon">
-     <!-- Ícone de robô SVG -->
-     <svg class="bot-icon" viewBox="0 0 32 32" fill="none"><rect x="7" y="13" width="18" height="12" rx="6" fill="#4cc9f0"/><rect x="11" y="7" width="10" height="8" rx="5" fill="#4361ee"/><circle cx="12.5" cy="19.5" r="2" fill="#fff"/><circle cx="19.5" cy="19.5" r="2" fill="#fff"/><rect x="15" y="3" width="2" height="6" rx="1" fill="#3a0ca3"/></svg>
-   </span>
-   <h1>DeepSeek Chat Demo</h1>
-   <div class="subtitle">Assistente especializado em Clash of Clans</div>
+<span class="header-icon">
+<!-- Ícone de robô SVG -->
+<svg class="bot-icon" viewBox="0 0 32 32" fill="none"><rect x="7" y="13" width="18" height="12" rx="6" fill="#4cc9f0"/><rect x="11" y="7" width="10" height="8" rx="5" fill="#4361ee"/><circle cx="12.5" cy="19.5" r="2" fill="#fff"/><circle cx="19.5" cy="19.5" r="2" fill="#fff"/><rect x="15" y="3" width="2" height="6" rx="1" fill="#3a0ca3"/></svg>
+</span>
+<h1>DeepSeek Chat Demo</h1>
+<div class="subtitle">Assistente especializado em Clash of Clans</div>
 </header>
 <div class="chat-container">
-   <div id="chat"></div>
-   <form class="input-container" id="chat-form" style="display:none;">
-     <input type="text" id="inputMessage" placeholder="Digite sua mensagem..." autocomplete="off" required />
-     <button type="submit" id="sendBtn" title="Enviar"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg></button>
-   </form>
+<div id="chat"></div>
+<form class="input-container" id="chat-form" style="display:none;">
+<input type="text" id="inputMessage" placeholder="Digite sua mensagem..." autocomplete="off" required />
+<button type="submit" id="sendBtn" title="Enviar"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21l21-9-21-9v7l15 2-15 2z"/></svg></button>
+</form>
 </div>
 </div>
-
 <!-- Modal para API Key -->
 <div class="modal-bg" id="apikey-modal">
-   <form class="modal-card" id="apikey-form">
-     <label for="api-key">Informe sua DeepSeek API Key:</label>
-     <input type="password" id="api-key" required autocomplete="off" placeholder="sk-...">
-     <button type="submit">Salvar API Key</button>
-   </form>
+<form class="modal-card" id="apikey-form">
+<label for="api-key">Informe sua DeepSeek API Key:</label>
+<input type="password" id="api-key" required autocomplete="off" placeholder="sk-...">
+<button type="submit">Salvar API Key</button>
+</form>
 </div>
-
 <!-- Overlay de loading -->
 <div class="loading-overlay" id="loading-overlay" style="display:none;">
-   <div class="loading-spinner">
-     <div class="lds-dual-ring"></div>
-     <div class="loading-text">Aguarde... O robô está pensando!</div>
-   </div>
+<div class="loading-spinner">
+<div class="lds-dual-ring"></div>
+<div class="loading-text">Aguarde... O robô está pensando!</div>
 </div>
-
+</div>
 <script>
 let DEEPSEEK_API_KEY = "";
-
 const apikeyModal = document.getElementById('apikey-modal');
 const apikeyForm = document.getElementById('apikey-form');
 const chatForm = document.getElementById('chat-form');
 const chatDiv = document.getElementById('chat');
 const loadingOverlay = document.getElementById('loading-overlay');
 
+// Função para limpar tokens indesejados e espaços extras
+function cleanAIResponse(text) {
+  return text
+    .replace(/<\|begin▁of▁sentence\|>/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 function addMessage(text, sender) {
-   const div = document.createElement('div');
-   div.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
-   if(sender === 'bot') {
-     div.innerHTML = `<span class='bot-icon'>
-       <svg viewBox='0 0 32 32' fill='none' width='28' height='28'><rect x='7' y='13' width='18' height='12' rx='6' fill='#4cc9f0'/><rect x='11' y='7' width='10' height='8' rx='5' fill='#4361ee'/><circle cx='12.5' cy='19.5' r='2' fill='#fff'/><circle cx='19.5' cy='19.5' r='2' fill='#fff'/><rect x='15' y='3' width='2' height='6' rx='1' fill='#3a0ca3'/></svg>
-     </span> <span>${text.trim()}</span>`;
-   } else {
-     div.innerHTML = text.trim();
-   }
-   chatDiv.appendChild(div);
-   chatDiv.scrollTop = chatDiv.scrollHeight;
+  const div = document.createElement('div');
+  div.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
+  if(sender === 'bot') {
+    div.innerHTML = `<span class='bot-icon'>
+<svg viewBox='0 0 32 32' fill='none' width='28' height='28'><rect x='7' y='13' width='18' height='12' rx='6' fill='#4cc9f0'/><rect x='11' y='7' width='10' height='8' rx='5' fill='#4361ee'/><circle cx='12.5' cy='19.5' r='2' fill='#fff'/><circle cx='19.5' cy='19.5' r='2' fill='#fff'/><rect x='15' y='3' width='2' height='6' rx='1' fill='#3a0ca3'/></svg>
+</span> <span>${cleanAIResponse(text)}</span>`;
+  } else {
+    div.innerHTML = text.trim();
+  }
+  chatDiv.appendChild(div);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
 function showLoading(show=true) {
-   loadingOverlay.style.display = show ? "flex" : "none";
+  loadingOverlay.style.display = show ? "flex" : "none";
 }
 
 apikeyForm.addEventListener('submit', (e) => {
-   e.preventDefault();
-   const key = document.getElementById('api-key').value.trim();
-   if (!key.startsWith("sk-")) {
-     alert("API Key inválida!");
-     return;
-   }
-   DEEPSEEK_API_KEY = key;
-   apikeyModal.style.display = "none";
-   chatForm.style.display = "";
-   document.getElementById('inputMessage').focus();
+  e.preventDefault();
+  const key = document.getElementById('api-key').value.trim();
+  if (!key.startsWith("sk-")) {
+    alert("API Key inválida!");
+    return;
+  }
+  DEEPSEEK_API_KEY = key;
+  apikeyModal.style.display = "none";
+  chatForm.style.display = "";
+  document.getElementById('inputMessage').focus();
 });
 
 chatForm.addEventListener('submit', async (e) => {
-   e.preventDefault();
-   const message = document.getElementById('inputMessage').value.trim();
-   if (!message) return;
+  e.preventDefault();
+  const message = document.getElementById('inputMessage').value.trim();
+  if (!message) return;
+  addMessage(message, 'user');
+  showLoading(true);
+  chatForm.querySelector('button').disabled = true;
+  document.getElementById('inputMessage').disabled = true;
 
-   addMessage(message, 'user');
-   showLoading(true);
-   chatForm.querySelector('button').disabled = true;
-   document.getElementById('inputMessage').disabled = true;
-
-   const payload = {
-     model:"deepseek/deepseek-chat-v3.1:free",
-     messages:[
-       { role:"system", content:"Você é um assistente especializado em Clash of Clans. Responda perguntas sobre estratégias, tropas, construções, clãs, guerras, atualizações do jogo e dicas para jogadores." },
-       { role:"user", content: message }
-     ],
-     stream:false
-   };
-
-   try {
-     const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-       method:"POST",
-       headers:{
-         "Content-Type":"application/json",
-         "Authorization":"Bearer "+DEEPSEEK_API_KEY
-       },
-       body: JSON.stringify(payload)
-     });
-
-     if (!resp.ok) {
-       let errMsg = "Erro desconhecido";
-       try { const err = await resp.json(); errMsg = err.detail || JSON.stringify(err); } catch {}
-       addMessage(`<span style='color:#c00'>Erro:</span> ${errMsg}`, 'bot');
-     } else {
-       const data = await resp.json();
-       if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-         addMessage(data.choices[0].message.content, 'bot');
-       } else {
-         addMessage("<span style='color:#c00'>Resposta inesperada da API.</span>", 'bot');
-       }
-     }
-   } catch (err) {
-     addMessage("<span style='color:#c00'>Erro de conexão com a API DeepSeek.</span>", 'bot');
-   }
-
-   showLoading(false);
-   chatForm.querySelector('button').disabled = false;
-   document.getElementById('inputMessage').disabled = false;
-
-   document.getElementById('inputMessage').value = '';
+  // Prompt ajustado para respostas curtas e práticas
+  const payload = {
+    model:"deepseek/deepseek-chat-v3.1:free",
+    messages:[
+      { role:"system", content:"Você é um assistente especializado em Clash of Clans. Responda de forma curta, prática e objetiva. Evite enrolação." },
+      { role:"user", content: message }
+    ],
+    stream:false
+  };
+  
+  try {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+DEEPSEEK_API_KEY
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) {
+      let errMsg = "Erro desconhecido";
+      try {
+        const err = await resp.json();
+        errMsg = err.detail || JSON.stringify(err);
+      } catch {}
+      addMessage(`<span style='color:#c00'>Erro:</span> ${errMsg}`, 'bot');
+    } else {
+      const data = await resp.json();
+      if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+        addMessage(data.choices[0].message.content, 'bot');
+      } else {
+        addMessage("<span style='color:#c00'>Resposta inesperada da API.</span>", 'bot');
+      }
+    }
+  } catch (err) {
+    addMessage("<span style='color:#c00'>Erro de conexão com a API DeepSeek.</span>", 'bot');
+  }
+  
+  showLoading(false);
+  chatForm.querySelector('button').disabled = false;
+  document.getElementById('inputMessage').disabled = false;
+  document.getElementById('inputMessage').value = '';
 });
 </script>
 </body>
