@@ -66,7 +66,7 @@ chatForm.addEventListener('submit', async (e) => {
 
   // Monta o payload DeepSeek
   const payload = {
-    model: "deepseek/deepseek-r1:free",
+    model: "deepseek/deepseek-chat-v3.1:free",
     messages: [
       { role: "system", content: "Você é um assistente especializado em Clash of Clans. Responda perguntas sobre estratégias, tropas, construções, clãs, guerras, atualizações do jogo e dicas para jogadores." },
       { role: "user", content: message }
@@ -75,7 +75,7 @@ chatForm.addEventListener('submit', async (e) => {
   };
 
   try {
-    const resp = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
